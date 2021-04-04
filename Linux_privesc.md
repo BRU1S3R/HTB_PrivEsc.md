@@ -19,3 +19,9 @@ lsblk
 find / -path /proc -prune -o -type d -perm -o+w 2>/dev/null
 find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
 ```
+##### What am I on?
+```bash
+uname -a
+cat /etc/lsb-release
+
+```
