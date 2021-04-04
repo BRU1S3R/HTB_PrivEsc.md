@@ -23,5 +23,13 @@ find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
 ```bash
 uname -a
 cat /etc/lsb-release
-
+```
+#### Simple kerenel expoit with gcc
+```bash
+gcc kernel_expoit.c -o kernel_expoit && chmod +x kernel_expoit
+```
+### Kernel Exploits
+```bash
+Ubuntu 16.04.4 kernel priv esc - https://vulners.com/zdt/1337DAY-ID-30003
+Screen Version 4.5.0 
 ```
