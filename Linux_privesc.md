@@ -149,6 +149,9 @@ debugfs to access the entire file system with root level privileges
 ADM
 adm group are able to read all logs stored in /var/log.
 gather sensitive data stored in log files or enumerate user actions and running cron jobs.
+
+finging the groups
+find / -group groupx 2>/dev/null
 ```
 ### Kernel Exploits
 ```bash
